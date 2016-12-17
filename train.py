@@ -109,12 +109,10 @@ def train_and_predict():
     print('Creating and compiling model...')
     print('-'*30)
     model = create_model()
-    model_checkpoint = ModelCheckpoint('weights.hdf5', monitor='loss', save_best_only=True)
 
     print('-'*30)
     print('Building data augmentation object...')
     print('-'*30)
-    
     datagen = ImageDataGenerator(
         rotation_range=15,
         width_shift_range=0.10,
@@ -123,14 +121,18 @@ def train_and_predict():
         
     callbacks = [
         EarlyStopping(monitor='val_loss', patience=5, verbose=0),
-        model_checkpoint
+        ModelCheckpoint('weights.hdf5', monitor='loss', save_best_only=True)
     ]
     
+    print('-'*30)
     print('Begin training...')
-    model.fit_generator(datagen.flow(imgs_train,imgs_mask_train,batch_size=32),
-                        samples_per_epoch=imgs_train.shape[0]*5,
-                        nb_epoch=100,
-                        callbacks=callbacks)
+    print('-'*30)
+    model.fit(imgs_train, imgs_mask_train, batch_size=32, nb_epoch=100, verbose=1, shuffle=True,
+              callbacks=callbacks)
+#    model.fit_generator(datagen.flow(imgs_train,imgs_mask_train,batch_size=32),
+#                        samples_per_epoch=imgs_train.shape[0]*5,
+#                        nb_epoch=100,
+#                        callbacks=callbacks)
 
     print('-'*30)
     print('Loading and preprocessing test data...')
