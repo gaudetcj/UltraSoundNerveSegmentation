@@ -1,2 +1,4 @@
 *data
 *.npy
+*.pyc
+*.hdf5
