@@ -10,6 +10,7 @@ import glob
 import cv2
 import datetime
 import time
+import keras.backend as K
 from sklearn.cross_validation import KFold
 from keras.models import Model
 from keras.layers import Input, SpatialDropout2D, merge
@@ -166,6 +167,13 @@ def merge_several_folds_mean(data, nfolds):
         a += np.array(data[i])
     a /= nfolds
     return a.tolist()
+
+
+def dice_coef_loss(y_true, y_pred):
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    return -((2. * intersection + 1) / (K.sum(y_true_f) + K.sum(y_pred_f) + 1))
 
 
 def create_model(img_rows, img_cols):
